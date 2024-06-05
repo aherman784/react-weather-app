@@ -1,7 +1,10 @@
 import "./App.css";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import NavigationBar from "./components/navigation-bar/navigation-bar";
 import Search from "./components/search/search";
 import CurrentWeather from "./components/current-weather/current-weather";
 import Forecast from "./components/forecast/forecast";
+import Alerts from "./components/alerts/alerts";
 import { WEATHER_API_KEY, WEATHER_API_URL } from "./api";
 import { useState } from "react";
 
@@ -29,15 +32,28 @@ function App() {
       })
       .catch((err) => console.error(err));
   };
-  console.log(currentWeather);
-  console.log(forecast);
 
   return (
-    <div className="container">
+    <Router>
+      <div className="container">
+        <NavigationBar />
+        <Routes>
+          <Route path="/*" element={<Navigate to="/weather" />} />
+          <Route path="/weather" element={<WeatherPage handleOnSearchChange={handleOnSearchChange} currentWeather={currentWeather} forecast={forecast} />} />
+          <Route path="/alerts" element={<Alerts />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+const WeatherPage = ({ handleOnSearchChange, currentWeather, forecast }) => {
+  return (
+    <>
       <Search onSearchChange={handleOnSearchChange} />
       {currentWeather && <CurrentWeather data={currentWeather} />}
-      {forecast && <Forecast data={forecast}/>}
-    </div>
+      {forecast && <Forecast data={forecast} />}
+    </>
   );
 }
 
